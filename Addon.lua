@@ -82,7 +82,7 @@ hooksecurefunc('TargetFrame_CheckFaction', function(self)
     --     self.name:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
     -- end
 
-    if UnitIsPlayer(self.unit) then
+    if UnitIsPlayer(self.unit) and UnitClass(self.unit) then
         self.healthbar:SetStatusBarColor(UnitClassColor(self.unit))
         -- self.name:SetTextColor(UnitSelectionColor(self.unit))
     else
