@@ -4,25 +4,27 @@ Addon.lua
 @Link    : https://dengsir.github.io
 ]]
 
+local function alpha(ui, alpha)
+    if not ui then
+        return
+    end
+    ui:SetAlpha(alpha)
+end
 
 local function initFrameFonts(frame)
-    -- frame.name:SetFont(STANDARD_TEXT_FONT, 14)--, 'OUTLINE')
-    -- frame.name:SetAlpha(0.6)
-    -- frame.name:SetShadowOffset(0, 0)
-
     if frame.deadText then
         frame.deadText:SetFont(STANDARD_TEXT_FONT, 13)--, 'OUTLINE')
         frame.deadText:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
         frame.deadText:SetAlpha(0.6)
     end
 
-    frame.healthbar.TextString:SetAlpha(0.6)
-    frame.healthbar.LeftText:SetAlpha(0.6)
-    frame.healthbar.RightText:SetAlpha(0.6)
+    alpha(frame.healthbar.TextString, 0.6)
+    alpha(frame.healthbar.LeftText, 0.6)
+    alpha(frame.healthbar.RightText, 0.6)
 
-    frame.manabar.TextString:SetAlpha(0.6)
-    frame.manabar.LeftText:SetAlpha(0.6)
-    frame.manabar.RightText:SetAlpha(0.6)
+    alpha(frame.manabar.TextString, 0.6)
+    alpha(frame.manabar.LeftText, 0.6)
+    alpha(frame.manabar.RightText, 0.6)
 end
 
 for i, frame in ipairs({TargetFrame, FocusFrame}) do
