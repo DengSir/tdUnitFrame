@@ -18,6 +18,27 @@ local function initFrameFonts(frame)
         frame.deadText:SetAlpha(0.6)
     end
 
+    if not frame.healthbar.TextString then
+        TextStatusBar_UpdateTextString(frame.healthbar)
+        TextStatusBar_UpdateTextString(frame.manabar)
+
+        local function point(text, point, ...)
+            if not text then
+                return
+            end
+            text:ClearAllPoints()
+            text:SetPoint(point, frame.textureFrame, point, ...)
+        end
+
+        point(frame.healthbar.TextString, 'CENTER', -50, 3)
+        point(frame.healthbar.LeftText, 'LEFT', 8, 3)
+        point(frame.healthbar.RightText, 'RIGHT', -110, 3)
+
+        point(frame.manabar.TextString, 'CENTER', -50, -8)
+        point(frame.manabar.LeftText, 'LEFT', 8, -8)
+        point(frame.manabar.RightText, 'RIGHT', -110, -8)
+    end
+
     alpha(frame.healthbar.TextString, 0.6)
     alpha(frame.healthbar.LeftText, 0.6)
     alpha(frame.healthbar.RightText, 0.6)
