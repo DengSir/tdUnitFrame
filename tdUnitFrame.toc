@@ -1,6 +1,7 @@
-## Interface: 70000
+## Interface: 11302
 ## Title: tdUnitFrame
 ## Author: DengSir
-## Version: 70000.01
+## Version: 0.0.1
+## OptionalDeps: RealMobHealth
 
 Addon.lua
