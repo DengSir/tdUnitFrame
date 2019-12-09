@@ -9,15 +9,30 @@ local Range = CreateFrame('Frame', nil, TargetFrame)
 
 function Range:Load()
     self.elapsed = 0
-    self.text = self:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    self.text:SetPoint('BOTTOM', TargetFrame.portrait, 'TOP')
+    self.text = self:CreateFontString(nil, 'OVERLAY', 'NumberFontNormalLarge')
+    self.text:SetPoint('BOTTOM', TargetFrame.portrait, 'TOP', 0, 5)
     self:SetScript('OnUpdate', self.OnUpdate)
 end
 
 function Range:Update()
     local min, max = RangeCheck:GetRange(TargetFrame.unit)
+    if not max then
+        self.text:SetText('')
+    else
+        self.text:SetText(format('%d-%d', min, max))
 
-    self.text:SetText(max and format('%d-%d', min, max) or min .. '+')
+        if max == 5 then
+            self.text:SetTextColor(0, 1, 0)
+        elseif max <= 15 then
+            self.text:SetTextColor(0, 1, 1)
+        elseif max <= 20 then
+            self.text:SetTextColor(0.5, 0.5, 1)
+        elseif max <= 30 then
+            self.text:SetTextColor(1, 0.5, 0)
+        elseif max <= 35 then
+            self.text:SetTextColor(1, 0, 0)
+        end
+    end
 end
 
 function Range:OnUpdate(elapsed)
