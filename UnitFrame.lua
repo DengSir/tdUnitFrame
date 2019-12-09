@@ -20,6 +20,33 @@ do
     TargetFrame.manabar.TextString = CreateText(TargetFrame.textureFrame, 'CENTER', -50, -8)
     TargetFrame.manabar.LeftText = CreateText(TargetFrame.textureFrame, 'LEFT', 8, -8)
     TargetFrame.manabar.RightText = CreateText(TargetFrame.textureFrame, 'RIGHT', -110, -8)
+
+    local function MoveUp(widget, delta)
+        local p, r, rp, x, y = widget:GetPoint(1)
+        widget:ClearAllPoints()
+        widget:SetPoint(p, r, rp, x, y + delta)
+    end
+
+    PlayerName:Hide()
+    PlayerName.Show = nop
+
+    TargetFrame.name:SetFont(TargetFrame.name:GetFont(), 14, 'OUTLINE')
+
+    PlayerFrame.healthbar:EnableMouse(false)
+    PlayerFrame.manabar:EnableMouse(false)
+
+    MoveUp(TargetFrame.name, 16)
+    MoveUp(TargetFrame.deadText, 8)
+    MoveUp(TargetFrame.healthbar.textString, 8)
+    MoveUp(TargetFrame.healthbar.LeftText, 8)
+    MoveUp(TargetFrame.healthbar.RightText, 8)
+
+    MoveUp(PlayerFrame.healthbar.LeftText, 8)
+    MoveUp(PlayerFrame.healthbar.RightText, 8)
+
+    hooksecurefunc('LocalizeFrames', function()
+        MoveUp(PlayerFrame.healthbar.TextString, 8)
+    end)
 end
 
 local function InitAlpha(widget)
@@ -32,7 +59,7 @@ local function InitFrameFonts(frame)
     if frame.deadText then
         frame.deadText:SetFont(STANDARD_TEXT_FONT, 13)
         frame.deadText:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
-        frame.deadText:SetAlpha(0.6)
+        frame.deadText:SetAlpha(OPTIONS_FONT_ALPHA)
     end
 
     local hb = frame.healthbar
@@ -54,10 +81,6 @@ for i, frame in ipairs({TargetFrame, FocusFrame}) do
     frame.healthbar.lockColor = true
     frame.healthbar:ClearAllPoints()
     frame.healthbar:SetPoint('BOTTOMRIGHT', frame, 'TOPRIGHT', -106, -53)
-
-    hooksecurefunc(frame.nameBackground, 'SetVertexColor', function(_, ...)
-        frame.healthbar:SetStatusBarColor(...)
-    end)
 
     InitFrameFonts(frame)
 end
@@ -93,6 +116,8 @@ local GetUnitHealth = RealMobHealth and RealMobHealth.GetUnitHealth or function(
     return UnitHealth(unit), UnitHealthMax(unit)
 end
 
+local UnitHasHealthData = RealMobHealth and RealMobHealth.UnitHasHealthData or nop
+
 local function UnitClassColor(unit)
     return RAID_CLASS_COLORS[select(2, UnitClass(unit))]:GetRGB()
 end
@@ -113,7 +138,11 @@ end)
 
 hooksecurefunc('TargetFrame_CheckFaction', function(self)
     if UnitIsPlayer(self.unit) then
-        self.healthbar:SetStatusBarColor(UnitClassColor(self.unit))
+        if not self.healthbar.disconnected then
+            self.healthbar:SetStatusBarColor(UnitClassColor(self.unit))
+        else
+            self.healthbar:SetStatusBarColor(0.5, 0.5, 0.5)
+        end
     else
         if not UnitPlayerControlled(self.unit) and UnitIsTapDenied(self.unit) then
             self.healthbar:SetStatusBarColor(0.5, 0.5, 0.5)
@@ -152,7 +181,8 @@ hooksecurefunc('TextStatusBar_UpdateTextString', function(self)
     local current, max = GetUnitHealth(self.unit)
     TextStatusBar_UpdateTextStringWithValues(self, self.textString, current, 0, max)
 
-    if self.RightText and RealMobHealth and not RealMobHealth.UnitHasHealthData(self.unit) and max == 100 then
+    if self.RightText and max == 100 and UnitHasHealthData(self.unit) then
         self.RightText:SetText('???')
     end
 end)
+

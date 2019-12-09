@@ -4,4 +4,4 @@
 ## Version: 0.0.1
 ## OptionalDeps: RealMobHealth
 
-Addon.lua
+Load.xml
