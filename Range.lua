@@ -9,9 +9,12 @@ local Range = CreateFrame('Frame', nil, TargetFrame)
 
 function Range:Load()
     self.elapsed = 0
-    self.text = self:CreateFontString(nil, 'OVERLAY', 'NumberFontNormalLarge')
-    self.text:SetPoint('BOTTOM', TargetFrame.portrait, 'TOP', 0, 5)
+    self.text = self:CreateFontString(nil, 'OVERLAY')
+    self.text:SetFont(STANDARD_TEXT_FONT, 14, 'OUTLINE')
+    self.text:SetPoint('BOTTOM', TargetFrame.portrait, 'TOP', 0, 0)
     self:SetScript('OnUpdate', self.OnUpdate)
+    self:SetScript('OnEvent', self.OnEvent)
+    self:RegisterEvent('PLAYER_TARGET_CHANGED')
 end
 
 function Range:Update()
@@ -22,15 +25,13 @@ function Range:Update()
         self.text:SetText(format('%d-%d', min, max))
 
         if max == 5 then
-            self.text:SetTextColor(0, 1, 0)
-        elseif max <= 15 then
-            self.text:SetTextColor(0, 1, 1)
+            self.text:SetTextColor(1, 1, 1)
         elseif max <= 20 then
-            self.text:SetTextColor(0.5, 0.5, 1)
+            self.text:SetTextColor(0.05, 0.87, 0.82)
         elseif max <= 30 then
-            self.text:SetTextColor(1, 0.5, 0)
+            self.text:SetTextColor(0.04, 0.87, 0)
         elseif max <= 35 then
-            self.text:SetTextColor(1, 0, 0)
+            self.text:SetTextColor(1, 0.82, 0)
         end
     end
 end
@@ -40,6 +41,14 @@ function Range:OnUpdate(elapsed)
     if self.elapsed < 0 then
         self.elapsed = 0.1
         self:Update()
+    end
+end
+
+function Range:OnEvent()
+    if UnitClassification(TargetFrame.unit) == 'normal' then
+        self.text:SetPoint('BOTTOM', TargetFrame.portrait, 'TOP', 0, 0)
+    else
+        self.text:SetPoint('BOTTOM', TargetFrame.portrait, 'TOP', 0, 5)
     end
 end
 
