@@ -18,6 +18,9 @@ function Range:Load()
 end
 
 function Range:Update()
+    if UnitIsUnit(TargetFrame.unit, 'player') then
+        return self.text:SetText('')
+    end
     local min, max = RangeCheck:GetRange(TargetFrame.unit)
     if not max then
         self.text:SetText('')
