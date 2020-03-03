@@ -13,13 +13,17 @@ do
         return text
     end
 
-    TargetFrame.healthbar.textString = CreateText(TargetFrame.textureFrame, 'CENTER', -50, 3)
-    TargetFrame.healthbar.LeftText = CreateText(TargetFrame.textureFrame, 'LEFT', 8, 3)
-    TargetFrame.healthbar.RightText = CreateText(TargetFrame.textureFrame, 'RIGHT', -110, 3)
+    if not TargetFrame.healthbar.TextString then
+        TargetFrame.healthbar.TextString = CreateText(TargetFrame.textureFrame, 'CENTER', -50, 3)
+        TargetFrame.healthbar.LeftText = CreateText(TargetFrame.textureFrame, 'LEFT', 8, 3)
+        TargetFrame.healthbar.RightText = CreateText(TargetFrame.textureFrame, 'RIGHT', -110, 3)
+    end
 
-    TargetFrame.manabar.TextString = CreateText(TargetFrame.textureFrame, 'CENTER', -50, -8)
-    TargetFrame.manabar.LeftText = CreateText(TargetFrame.textureFrame, 'LEFT', 8, -8)
-    TargetFrame.manabar.RightText = CreateText(TargetFrame.textureFrame, 'RIGHT', -110, -8)
+    if not TargetFrame.manabar.TextString then
+        TargetFrame.manabar.TextString = CreateText(TargetFrame.textureFrame, 'CENTER', -50, -8)
+        TargetFrame.manabar.LeftText = CreateText(TargetFrame.textureFrame, 'LEFT', 8, -8)
+        TargetFrame.manabar.RightText = CreateText(TargetFrame.textureFrame, 'RIGHT', -110, -8)
+    end
 
     local function MoveUp(widget, delta)
         local p, r, rp, x, y = widget:GetPoint(1)
@@ -37,7 +41,7 @@ do
 
     MoveUp(TargetFrame.name, 16)
     MoveUp(TargetFrame.deadText, 8)
-    MoveUp(TargetFrame.healthbar.textString, 8)
+    MoveUp(TargetFrame.healthbar.TextString, 8)
     MoveUp(TargetFrame.healthbar.LeftText, 8)
     MoveUp(TargetFrame.healthbar.RightText, 8)
 
@@ -95,7 +99,7 @@ InitFrameFonts(PartyMemberFrame4)
 local select = select
 local hooksecurefunc = hooksecurefunc
 
-local UnitClass = UnitClass
+local UnitClassBase = UnitClassBase
 local UnitClassification = UnitClassification
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
@@ -104,7 +108,6 @@ local UnitIsTapDenied = UnitIsTapDenied
 local UnitPlayerControlled = UnitPlayerControlled
 local UnitSelectionColor = UnitSelectionColor
 local HealthBar_OnValueChanged = HealthBar_OnValueChanged
-local TextStatusBar_UpdateTextStringWithValues = TextStatusBar_UpdateTextStringWithValues
 
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
@@ -112,14 +115,13 @@ local PlayerFrameHealthBar = PlayerFrameHealthBar
 local PlayerLevelText = PlayerLevelText
 local PlayerFrameTexture = PlayerFrameTexture
 
-local GetUnitHealth = RealMobHealth and RealMobHealth.GetUnitHealth or function(unit)
-    return UnitHealth(unit), UnitHealthMax(unit)
-end
-
-local UnitHasHealthData = RealMobHealth and RealMobHealth.UnitHasHealthData or nop
-
 local function UnitClassColor(unit)
-    return RAID_CLASS_COLORS[select(2, UnitClass(unit))]:GetRGB()
+    local class = UnitClassBase(unit)
+    local color = class and RAID_CLASS_COLORS[class]
+    if color then
+        return color.r, color.g, color.b
+    end
+    return 1, 1, 1
 end
 
 hooksecurefunc('TargetFrame_CheckClassification', function(self)
@@ -172,17 +174,3 @@ end)
 hooksecurefunc('TargetFrame_UpdateLevelTextAnchor', function(self)
     self.levelText:SetPoint('CENTER', 63, -16)
 end)
-
-hooksecurefunc('TextStatusBar_UpdateTextString', function(self)
-    if not self.textString then
-        return
-    end
-
-    local current, max = GetUnitHealth(self.unit)
-    TextStatusBar_UpdateTextStringWithValues(self, self.textString, current, 0, max)
-
-    if self.RightText and max == 100 and UnitHasHealthData(self.unit) then
-        self.RightText:SetText('???')
-    end
-end)
-
