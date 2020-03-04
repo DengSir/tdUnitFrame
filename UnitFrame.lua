@@ -4,6 +4,16 @@
 
 local OPTIONS_FONT_ALPHA = 0.6
 
+local function GetChild(frame, name)
+    return _G[frame:GetName() .. name]
+end
+
+local function MoveUp(widget, delta)
+    local p, r, rp, x, y = widget:GetPoint(1)
+    widget:ClearAllPoints()
+    widget:SetPoint(p, r, rp, x, y + delta)
+end
+
 ---- TargetFrame
 do
     local function CreateText(parent, ...)
@@ -25,25 +35,11 @@ do
         TargetFrame.manabar.RightText = CreateText(TargetFrame.textureFrame, 'RIGHT', -110, -8)
     end
 
-    local function MoveUp(widget, delta)
-        local p, r, rp, x, y = widget:GetPoint(1)
-        widget:ClearAllPoints()
-        widget:SetPoint(p, r, rp, x, y + delta)
-    end
-
     PlayerName:Hide()
     PlayerName.Show = nop
 
-    TargetFrame.name:SetFont(TargetFrame.name:GetFont(), 14, 'OUTLINE')
-
     PlayerFrame.healthbar:EnableMouse(false)
     PlayerFrame.manabar:EnableMouse(false)
-
-    MoveUp(TargetFrame.name, 16)
-    MoveUp(TargetFrame.deadText, 8)
-    MoveUp(TargetFrame.healthbar.TextString, 8)
-    MoveUp(TargetFrame.healthbar.LeftText, 8)
-    MoveUp(TargetFrame.healthbar.RightText, 8)
 
     MoveUp(PlayerFrame.healthbar.LeftText, 8)
     MoveUp(PlayerFrame.healthbar.RightText, 8)
@@ -61,7 +57,7 @@ end
 
 local function InitFrameFonts(frame)
     if frame.deadText then
-        frame.deadText:SetFont(STANDARD_TEXT_FONT, 13)
+        frame.deadText:SetFont(STANDARD_TEXT_FONT, 13, 'OUTLINE')
         frame.deadText:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
         frame.deadText:SetAlpha(OPTIONS_FONT_ALPHA)
     end
@@ -85,6 +81,14 @@ for i, frame in ipairs({TargetFrame, FocusFrame}) do
     frame.healthbar.lockColor = true
     frame.healthbar:ClearAllPoints()
     frame.healthbar:SetPoint('BOTTOMRIGHT', frame, 'TOPRIGHT', -106, -53)
+
+    frame.name:SetFont(frame.name:GetFont(), 14, 'OUTLINE')
+
+    MoveUp(frame.name, 16)
+    MoveUp(frame.deadText, 8)
+    MoveUp(frame.healthbar.TextString, 8)
+    MoveUp(frame.healthbar.LeftText, 8)
+    MoveUp(frame.healthbar.RightText, 8)
 
     InitFrameFonts(frame)
 end
